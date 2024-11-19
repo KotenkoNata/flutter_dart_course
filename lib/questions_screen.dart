@@ -4,7 +4,10 @@ import 'package:flutter_dart_course/data/questions.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class QuestionsScreen extends StatefulWidget {
-  const QuestionsScreen({super.key, required this.onSelectAnswer});
+  const QuestionsScreen({
+    super.key,
+    required this.onSelectAnswer,
+  });
 
   final void Function(String answer) onSelectAnswer;
 
@@ -17,10 +20,12 @@ class QuestionsScreen extends StatefulWidget {
 class _QuestionsScreenState extends State<QuestionsScreen> {
   var currentQuestionIndex = 0;
 
-  void answerQuestion(String selectedAnswer){
+  void answerQuestion(String selectedAnswer) {
     widget.onSelectAnswer(selectedAnswer);
+    // currentQuestionIndex = currentQuestionIndex + 1;
+    // currentQuestionIndex += 1;
     setState(() {
-      currentQuestionIndex++;
+      currentQuestionIndex++; // increments the value by 1
     });
   }
 
@@ -38,21 +43,22 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           children: [
             Text(
               currentQuestion.text,
-              textAlign: TextAlign.center,
               style: GoogleFonts.lato(
                 color: const Color.fromARGB(255, 201, 153, 251),
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
-            ...currentQuestion.shuffledAnswers.map((item){
+            ...currentQuestion.shuffledAnswers.map((answer) {
               return AnswerButton(
-                  answerText: item,
-                  onTap: () {
-                    answerQuestion(item);
-                  });
-            }),
+                answerText: answer,
+                onTap: () {
+                  answerQuestion(answer);
+                },
+              );
+            })
           ],
         ),
       ),
