@@ -5,7 +5,7 @@ class QuestionIdentifier extends StatelessWidget {
     super.key,
     required this.isCorrectAnswer,
     required this.questionIndex,
-});
+  });
 
   final int questionIndex;
   final bool isCorrectAnswer;

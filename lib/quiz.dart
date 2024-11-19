@@ -52,8 +52,8 @@ class _QuizState extends State<Quiz>{
 
     if(activeScreen == 'results-screen'){
       screenWidget = ResultsScreen(
-          chosenAnswers: _selectedAnswers,
-          onRestart: restartQuiz,
+        chosenAnswers: _selectedAnswers,
+        onRestart: restartQuiz,
       );
     }
 

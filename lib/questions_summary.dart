@@ -13,7 +13,7 @@ class QuestionSummary extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: summaryData.map(
-            (data) {
+                (data) {
               return SummaryItem(data);
             },
           ).toList(),

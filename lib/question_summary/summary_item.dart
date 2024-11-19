@@ -15,8 +15,8 @@ class SummaryItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         QuestionIdentifier(
-            isCorrectAnswer: isCorrectAnswer,
-            questionIndex: itemData['question_index'] as int,
+          isCorrectAnswer: isCorrectAnswer,
+          questionIndex: itemData['question_index'] as int,
         ),
         const SizedBox(width: 20),
         Expanded(child: Column(
@@ -34,7 +34,7 @@ class SummaryItem extends StatelessWidget {
             Text(
               itemData['user_answer'] as String,
               style: const TextStyle(
-                color: Color.fromARGB(255, 202, 171, 252)
+                  color: Color.fromARGB(255, 202, 171, 252)
               ),
             ),
             Text(
