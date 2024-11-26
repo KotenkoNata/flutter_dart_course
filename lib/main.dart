@@ -49,7 +49,6 @@ void main() {
                   fontSize: 16,
                 ),
               )),
-      themeMode: ThemeMode.dark,
       home: const Expenses(),
     ),
   );
