@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_dart_course/models/category.dart';
+import 'package:flutter_dart_course/models/categories.dart';
 
 const categories = {
   Categories.vegetables: Category(

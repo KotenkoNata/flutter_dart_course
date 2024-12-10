@@ -1,7 +1,8 @@
 import 'package:flutter_dart_course/models/grocery_item.dart';
 import 'package:flutter_dart_course/data/categories.dart';
+import 'package:flutter_dart_course/models/categories.dart';
 
-const groceryItems = [
+final groceryItems = [
   GroceryItem(
       id: 'a',
       name: 'Milk',
