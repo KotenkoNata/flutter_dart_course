@@ -34,7 +34,14 @@ class _GroceryListState extends State<GroceryList> {
         _error = 'Failed to catch data. Please try again later.';
       });
     }
-    
+
+    if(response.body == 'null'){
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
     final Map<String, dynamic>listData = json.decode(response.body);
 
     final List<GroceryItem>loadedItems = [];
@@ -68,10 +75,18 @@ class _GroceryListState extends State<GroceryList> {
     });
   }
 
-  void _removeItem(GroceryItem item){
+  void _removeItem(GroceryItem item) async {
+    final index = _groceryItems.indexOf(item);
     setState(() {
       _groceryItems.remove(item);
     });
+    final url = Uri.https('flutter-app-a47f8-default-rtdb.firebaseio.com', 'shopping-list/${item.id}.json');
+    final response = await http.delete(url);
+    if(response.statusCode >= 400 ){
+      setState(() {
+        _groceryItems.insert(index, item);
+      });
+    }
   }
 
   @override
