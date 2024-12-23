@@ -40,7 +40,10 @@ class _MapScreenState extends State<MapScreen>{
         ],
       ),
       body: GoogleMap(
-          onTap: (position){
+          onTap:
+          !widget.isSelecting
+              ? null
+              : (position){
             setState(() {
               _pickedLocation = position;
             });
