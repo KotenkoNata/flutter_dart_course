@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dart_course/models/place.dart';
+import 'package:flutter_dart_course/screens/map.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 
-class LocationInput extends StatefulWidget{
+class LocationInput extends StatefulWidget {
   const LocationInput({super.key, required this.onSelectLocation});
 
   final void Function(PlaceLocation location) onSelectLocation;
@@ -16,13 +18,13 @@ class LocationInput extends StatefulWidget{
   }
 }
 
-class _LocationInputState extends State<LocationInput>{
+class _LocationInputState extends State<LocationInput> {
   PlaceLocation? _pickedLocation;
   var _isGettingLocation = false;
   final key = dotenv.env['API_KEY'];
 
-  String get locationImage{
-    if(_pickedLocation == null){
+  String get locationImage {
+    if (_pickedLocation == null) {
       return '';
     }
 
@@ -30,6 +32,29 @@ class _LocationInputState extends State<LocationInput>{
     final lng = _pickedLocation!.longitude;
 
     return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng&zoom=16&size=600x300&maptype=roadmap&markers=color:red%7Clabel:A%7C$lat,$lng&key=$key';
+  }
+
+  Future<void> _savePlace(double latitude, double longitude) async{
+    final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$key');
+
+    final response = await http.get(url);
+    final resData = json.decode(response.body);
+
+    final address = resData['results'][0]['formatted_address'];
+
+    print(address);
+
+    setState(() {
+      _pickedLocation =
+          PlaceLocation(
+              latitude: latitude,
+              longitude: longitude,
+              address: address);
+      _isGettingLocation = false;
+    });
+
+    widget.onSelectLocation(_pickedLocation!);
   }
 
   void _getCurrentLocation() async {
@@ -63,25 +88,25 @@ class _LocationInputState extends State<LocationInput>{
     final lat = locationData.latitude;
     final lng = locationData.longitude;
 
-    if(lat == null || lng == null){
+    if (lat == null || lng == null) {
       return;
     }
 
-    final url = Uri.parse('https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$key');
+    _savePlace(lat, lng);
+  }
 
+  void _selectOnMap() async{
+    final pickedLocation = await Navigator.of(context).push<LatLng>(
+      MaterialPageRoute(
+        builder: (ctx) => const MapScreen(),
+      ),
+    );
 
+    if(pickedLocation == null){
+      return;
+    }
 
-    final response = await http.get(url);
-    final resData = json.decode(response.body);
-    print(resData);
-    final address = resData['results'][0]['formatted_address'];
-
-    setState(() {
-      _pickedLocation = PlaceLocation(longitude: lng, latitude: lat, address: address);
-      _isGettingLocation = false;
-    });
-
-    widget.onSelectLocation(_pickedLocation!);
+    _savePlace(pickedLocation.latitude, pickedLocation.longitude);
   }
 
   @override
@@ -90,20 +115,20 @@ class _LocationInputState extends State<LocationInput>{
       'No location chosen',
       textAlign: TextAlign.center,
       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-        color: Theme.of(context).colorScheme.onSurface,
-      ),
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
     );
 
-    if(_pickedLocation != null){
+    if (_pickedLocation != null) {
       previewContent = Image.network(
-          locationImage,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          height: double.infinity,
+        locationImage,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
       );
     }
 
-    if(_isGettingLocation){
+    if (_isGettingLocation) {
       previewContent = const CircularProgressIndicator();
     }
 
@@ -114,21 +139,23 @@ class _LocationInputState extends State<LocationInput>{
           width: double.infinity,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-              border: Border.all(width: 1, color: Theme.of(context).colorScheme.primary.withOpacity(0.2))
-          ),
+              border: Border.all(
+                  width: 1,
+                  color:
+                      Theme.of(context).colorScheme.primary.withOpacity(0.2))),
           child: previewContent,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             TextButton.icon(
-                icon: const Icon(Icons.location_on),
-                onPressed: _getCurrentLocation,
-                label: const Text('Get Current Location'),
+              icon: const Icon(Icons.location_on),
+              onPressed: _getCurrentLocation,
+              label: const Text('Get Current Location'),
             ),
             TextButton.icon(
               icon: const Icon(Icons.map),
-              onPressed: (){},
+              onPressed: _selectOnMap,
               label: const Text('Select on Map'),
             )
           ],
